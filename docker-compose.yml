@@ -1,0 +1,7 @@
+services:
+  crs-calculator:
+    image: ${DOCKERHUB_USER:-local}/crs-calculator:${TAG:-latest}
+    build: .
+    ports:
+      - "${PORT:-8000}:8000"
+    restart: unless-stopped

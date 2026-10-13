@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRS Score Calculator</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <h1>Express Entry CRS Calculator</h1>
+    <p>Estimate your Comprehensive Ranking System score out of 1,200.</p>
+  </div>
+</header>
+
+<main class="wrap layout">
+<form id="form" autocomplete="off" novalidate>
+
+  <div class="notice">
+    <strong>No job-offer points.</strong> Arranged employment points were removed from the CRS
+    effective March 25, 2025. A job offer can still matter for program eligibility.
+  </div>
+
+  <section class="card">
+    <h2>Personal</h2>
+    <label>Marital status
+      <select name="marital_status">
+        <option value="single">Never married / single</option>
+        <option value="married">Married</option>
+        <option value="common_law">Common-law</option>
+        <option value="divorced">Divorced / separated</option>
+        <option value="legally_separated">Legally separated</option>
+        <option value="annulled">Annulled marriage</option>
+        <option value="widowed">Widowed</option>
+      </select>
+    </label>
+    <div id="spouse-status" hidden>
+      <label class="check"><input type="checkbox" name="spouse_is_citizen_or_pr"> My spouse/partner is a Canadian citizen or permanent resident</label>
+      <label class="check" id="accompanying-row"><input type="checkbox" name="spouse_accompanying" checked> My spouse/partner will come with me to Canada</label>
+      <p class="hint">You are scored as if single when your partner is a citizen/PR or is not coming with you.</p>
+    </div>
+    <label>Age
+      <input type="number" name="age" min="17" max="100" step="1" required placeholder="e.g. 29">
+      <span class="hint">Your age on the day you are invited to apply (or your current age if not yet invited).</span>
+    </label>
+  </section>
+
+  <section class="card">
+    <h2>Education</h2>
+    <label>Highest level of education
+      <select name="education" required>
+        <option value="">Select…</option>
+        <option value="none">Less than secondary (high school)</option>
+        <option value="secondary">Secondary diploma (high school graduation)</option>
+        <option value="one_year">One-year post-secondary credential</option>
+        <option value="two_year">Two-year post-secondary program</option>
+        <option value="bachelor">Bachelor's degree or a program of three or more years</option>
+        <option value="two_or_more">Two or more credentials (one for a program of three or more years)</option>
+        <option value="master">Master's degree or professional degree (medicine, veterinary medicine, dentistry, optometry, law, chiropractic medicine, pharmacy)</option>
+        <option value="doctoral">Doctoral degree (Ph.D.)</option>
+      </select>
+      <span class="hint">Canadian credentials, or foreign ones with an Educational Credential Assessment (ECA) less than 5 years old. Two credentials that are both under three years count as a two-year program.</span>
+    </label>
+  </section>
+
+  <section class="card">
+    <h2>Official languages</h2>
+    <p class="hint">Test results must be less than 2 years old on the date you submit your Express Entry profile and when you are invited.</p>
+    <fieldset class="lang" data-lang="first_language">
+      <legend>First official language</legend>
+      <label>Test <select data-role="test"></select></label>
+      <div class="scores" data-role="scores"></div>
+    </fieldset>
+    <fieldset class="lang" data-lang="second_language">
+      <legend>Second official language <small>(optional)</small></legend>
+      <label>Test <select data-role="test"></select></label>
+      <div class="scores" data-role="scores"></div>
+    </fieldset>
+  </section>
+
+  <section class="card">
+    <h2>Work experience</h2>
+    <label>Skilled work in Canada (last 10 years)
+      <select name="canadian_work_years">
+        <option value="0">None or less than a year</option>
+        <option value="1">1 year</option><option value="2">2 years</option><option value="3">3 years</option>
+        <option value="4">4 years</option><option value="5">5 years or more</option>
+      </select>
+      <span class="hint">Paid, full-time (or equal part-time), NOC TEER 0–3, for a Canadian employer while physically in Canada (remote work from Canada counts).</span>
+    </label>
+    <label>Foreign skilled work (last 10 years)
+      <select name="foreign_work_years">
+        <option value="0">None or less than a year</option>
+        <option value="1">1 year</option><option value="2">2 years</option><option value="3">3 years or more</option>
+      </select>
+      <span class="hint">Paid, full-time (or equal part-time), in one occupation (NOC TEER 0–3).</span>
+    </label>
+    <label class="check"><input type="checkbox" name="has_certificate_of_qualification"> I have a certificate of qualification from a Canadian province, territory or federal body (trades)</label>
+  </section>
+
+  <section class="card" id="spouse-card" hidden>
+    <h2>Spouse / common-law partner</h2>
+    <label>Highest level of education
+      <select name="spouse_education">
+        <option value="none">None, or less than secondary</option>
+        <option value="secondary">Secondary diploma</option>
+        <option value="one_year">One-year program</option>
+        <option value="two_year">Two-year program</option>
+        <option value="bachelor">Bachelor's degree or a program of three or more years</option>
+        <option value="two_or_more">Two or more credentials (one for three or more years)</option>
+        <option value="master">Master's or professional degree</option>
+        <option value="doctoral">Doctoral degree (Ph.D.)</option>
+      </select>
+    </label>
+    <label>Skilled work in Canada (last 10 years)
+      <select name="spouse_canadian_work_years">
+        <option value="0">None or less than a year</option>
+        <option value="1">1 year</option><option value="2">2 years</option><option value="3">3 years</option>
+        <option value="4">4 years</option><option value="5">5 years or more</option>
+      </select>
+    </label>
+    <fieldset class="lang" data-lang="spouse_language">
+      <legend>Language test <small>(leave as "No test" if none taken)</small></legend>
+      <label>Test <select data-role="test"></select></label>
+      <div class="scores" data-role="scores"></div>
+    </fieldset>
+  </section>
+
+  <section class="card">
+    <h2>Additional points</h2>
+    <label class="check"><input type="checkbox" name="has_provincial_nomination"> I have a provincial or territorial nomination certificate</label>
+    <label class="check"><input type="checkbox" name="has_sibling_in_canada"> I (or my accompanying partner) have a brother or sister in Canada who is a citizen or permanent resident, 18 or older</label>
+    <label>Canadian study (separate bonus from your education above)
+      <select name="canadian_study">
+        <option value="none">No Canadian credential</option>
+        <option value="one_two_year">One- or two-year diploma or certificate</option>
+        <option value="three_plus">Degree/diploma of three years or longer, or a Master's, professional or doctoral degree</option>
+      </select>
+      <span class="hint">Your Canadian degree also counts under Education; this is an extra bonus. To qualify: ESL/FSL no more than half of the study, no return-home award, a school physically in Canada (distance learning does not count), full-time and physically present for at least 8 months.</span>
+    </label>
+  </section>
+</form>
+
+<aside class="result" aria-live="polite">
+  <div class="card sticky">
+    <h2>Your estimated score</h2>
+    <div class="total"><span id="total">–</span><small>/ 1,200</small></div>
+    <p id="message" class="hint">Fill in age, education and your first-language test to see your score.</p>
+    <ul id="breakdown" class="breakdown"></ul>
+    <p class="disclaimer">For general guidance only. If results differ, the Express Entry system's score governs.</p>
+  </div>
+</aside>
+</main>
+
+<script>window.CRS_TESTS = {{ tests | tojson }};</script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
